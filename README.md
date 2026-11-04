@@ -1,66 +1,42 @@
-# KostFlow — Sistem Manajemen Rumah Kost (Next.js & React Ready)
+# Kost Dashboard
 
-KostFlow adalah aplikasi web modern, konsisten, dan fungsional untuk manajemen operasional dan keuangan rumah kost.
+Dashboard manajemen operasional kos modern berbasis web untuk pemilik (owner) dan pengelola kos. Terhubung langsung dengan **Kost Backend API**.
 
----
+## 🚀 Fitur Utama
+- **Overview & Metrik Finansial**: Ringkasan kamar terisi, pendapatan bulanan, tagihan tertunggak, dan rasio okupansi.
+- **Manajemen Kamar**: Pemantauan status kamar (Tersedia, Terisi, Perbaikan), penambahan, serta pengubahan tarif sewa.
+- **Manajemen Penghuni**: Data penyewa aktif, riwayat kamar, kontak darurat, dan proses check-out.
+- **Pusat Tagihan & Pembayaran**: 
+  - Pembuatan tagihan satuan atau otomatis massal per bulan.
+  - Review bukti transfer / QRIS dari penyewa dengan modal verifikasi dan alasan penolakan.
+- **Pencatatan Biaya & Laporan**: Pembukuan pengeluaran operasional (listrik, air, wifi, pemeliharaan) beserta ringkasan laba/rugi.
+- **Pengaturan Kos**: Pengaturan data rekening bank pemilik dan QRIS usaha.
 
-## Arsitektur & Dukungan Next.js
+## 🛠️ Tech Stack
+- **Framework**: Next.js 15 / React 19
+- **Bahasa**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Icon**: Lucide React
+- **Komunikasi Data**: REST API Client terhubung ke `http://localhost:5000/api`
 
-Seluruh kode sumber KostFlow telah dirancang dan dioptimalkan agar **kompatibel 100% dengan Next.js App Router (Next.js 14 / 15)**:
+## 📦 Menjalankan Proyek
 
-### 1. Struktur Next.js App Router yang Telah Disediakan
-- `src/app/layout.tsx` — Root layout dengan deklarasi `metadata` (SEO, OpenGraph, Twitter Card) dan Google Fonts (Plus Jakarta Sans & JetBrains Mono).
-- `src/app/page.tsx` — Halaman utama App Router (`'use client'`) dengan proteksi SSR hydration-safe.
-- `src/app/globals.css` — Global styling dan konfigurasi tema Tailwind CSS.
-- `next.config.mjs` — Konfigurasi resmi Next.js (optimasi gambar & StrictMode).
-- `src/context/KostContext.tsx` — State store reaktif dengan direktif `'use client'` dan pengecekan aman `typeof window !== 'undefined'` untuk akses `localStorage`.
-- `src/components/` — Komponen modular murni React yang dapat langsung digunakan pada Next.js App Router.
+### 1. Instalasi Dependensi
+```bash
+npm install --legacy-peer-deps
+```
 
----
+### 2. Konfigurasi Backend
+Pastikan `kost_backend` telah aktif di `http://localhost:5000`.
 
-## Menjalankan di Next.js Mandiri / Vercel
+### 3. Jalankan Mode Development
+```bash
+npm run dev
+```
+Buka browser di: `http://localhost:3000`
 
-Jika Anda ingin menjalankan atau men-deploy proyek ini ke Next.js (misalnya di Vercel atau VPS pribadi):
-
-1. **Pasang dependensi Next.js:**
-   ```bash
-   npm install next react react-dom lucide-react
-   npm install -D @tailwindcss/postcss postcss
-   ```
-
-2. **Perbarui skrip di `package.json`:**
-   ```json
-   "scripts": {
-     "dev": "next dev",
-     "build": "next build",
-     "start": "next start",
-     "lint": "next lint"
-   }
-   ```
-
-3. **Jalankan server pengembangan:**
-   ```bash
-   npm run dev
-   ```
-   Aplikasi akan berjalan di `http://localhost:3000`.
-
----
-
-## Fitur Utama KostFlow
-
-1. **Dashboard Adaptif Berdasarkan Peran:**
-   - 4 Kartu ringkasan utama: Total Kamar & Okupansi, Kamar Terisi vs Kosong, Tagihan Belum Lunas, Pembayaran Menunggu Verifikasi.
-   - Antrean cepat verifikasi bukti bayar.
-   - Peta status keterisian kamar dan riwayat transaksi kas terkini.
-2. **Kamar:** CRUD data kamar, penentuan harga bulanan, status *Tersedia*, *Terisi*, atau *Pemeliharaan*.
-3. **Penghuni:** Pendaftaran penghuni baru, penetapan kamar, kontak darurat, dan alur check-out otomatis.
-4. **Tagihan & Pembayaran:**
-   - Pembuatan faktur tunggal atau *Generate Rutin Bulanan* untuk seluruh penghuni aktif dalam 1 klik.
-   - Dukungan Transfer Bank (BCA) dan QRIS.
-   - Alur verifikasi resi: penghuni mengunggah bukti bayar -> pengelola meninjau dan menyetujui/menolak dengan alasan.
-5. **Pengeluaran Operasional:** Pencatatan biaya utilitas (listrik/air), pemeliharaan, kebersihan, dan operasional lainnya.
-6. **Laporan Keuangan & Integritas Kas:**
-   - Memisahkan pendapatan kas terkonfirmasi, piutang, pending verifikasi, dan arus kas bersih.
-   - Filter bulanan dan tahunan.
-   - Tombol **Unduh Laporan CSV** berfungsi nyata.
-7. **Pengaturan:** Konfigurasi rekening, QRIS, dan peralihan akun demo instan.
+### 4. Build Production
+```bash
+npm run build
+npm start
+```
