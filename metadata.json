@@ -1,0 +1,6 @@
+{
+  "name": "KostFlow - Dashboard Manajemen Kost",
+  "description": "Sistem manajemen operasional dan keuangan rumah kost modern: kelola kamar, penghuni, tagihan, verifikasi pembayaran transfer & QRIS, pengeluaran, dan laporan keuangan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
