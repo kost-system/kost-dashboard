@@ -38,7 +38,7 @@ const DEFAULT_USER: User = {
 };
 
 interface KostContextType {
-  currentUser: User;
+  currentUser: User | null;
   users: User[];
   rooms: Room[];
   tenants: Tenant[];
@@ -50,6 +50,8 @@ interface KostContextType {
   error: string | null;
   refreshData: () => Promise<void>;
   switchUser: (userId: string) => void;
+  login: (user: User, token: string) => void;
+  logout: () => void;
   // Room Actions
   addRoom: (room: Omit<Room, 'id'>) => { success: boolean; error?: string };
   updateRoom: (id: string, updates: Partial<Room>) => { success: boolean; error?: string };
@@ -89,8 +91,8 @@ interface KostContextType {
 const KostContext = createContext<KostContextType | undefined>(undefined);
 
 export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User>(DEFAULT_USER);
-  const [users, setUsers] = useState<User[]>([DEFAULT_USER]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -99,6 +101,30 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [settings, setSettings] = useState<KostSettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Restore admin session from localStorage
+  useEffect(() => {
+    try {
+      const savedUser = localStorage.getItem('kost_admin_user');
+      if (savedUser) {
+        setCurrentUser(JSON.parse(savedUser));
+      }
+    } catch {
+      localStorage.removeItem('kost_admin_user');
+    }
+  }, []);
+
+  const login = (user: User, token: string) => {
+    setCurrentUser(user);
+    localStorage.setItem('kost_admin_user', JSON.stringify(user));
+    localStorage.setItem('kost_admin_token', token);
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('kost_admin_user');
+    localStorage.removeItem('kost_admin_token');
+  };
 
   const refreshData = useCallback(async () => {
     try {
@@ -138,7 +164,10 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const switchUser = (userId: string) => {
     const user = users.find((u) => u.id === userId);
-    if (user) setCurrentUser(user);
+    if (user) {
+      setCurrentUser(user);
+      localStorage.setItem('kost_admin_user', JSON.stringify(user));
+    }
   };
 
   // ROOM ACTIONS
@@ -292,6 +321,8 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         error,
         refreshData,
         switchUser,
+        login,
+        logout,
         addRoom,
         updateRoom,
         deleteRoom,

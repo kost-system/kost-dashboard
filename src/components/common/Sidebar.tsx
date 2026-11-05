@@ -40,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }
 
   const getNavItems = (): NavItem[] => {
-    if (currentUser.role === 'tenant') {
+    if (currentUser?.role === 'tenant') {
       return [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'invoices', label: 'Tagihan Saya', icon: Receipt },

@@ -9,7 +9,8 @@ import {
   ShieldCheck, 
   UserCheck, 
   User as UserIcon,
-  RotateCcw
+  RotateCcw,
+  LogOut
 } from 'lucide-react';
 import { ConfirmModal } from './ConfirmModal';
 
@@ -19,7 +20,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ currentTab, onOpenMobileMenu }) => {
-  const { currentUser, users, switchUser, submissions, resetToDefaultData } = useKost();
+  const { currentUser, users, switchUser, submissions, resetToDefaultData, logout } = useKost();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
@@ -173,17 +174,16 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onOpenMobileMenu }) 
                   })}
                 </div>
 
-                <div className="p-2 border-t border-slate-100 mt-1">
+                <div className="p-2 border-t border-slate-100 mt-1 space-y-1">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
                       setIsUserMenuOpen(false);
-                      setShowResetConfirm(true);
+                      logout();
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition-colors font-medium"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition-colors font-medium cursor-pointer"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset Data Demo KostFlow</span>
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Keluar (Logout)</span>
                   </button>
                 </div>
               </div>

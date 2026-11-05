@@ -12,9 +12,10 @@ import { ExpensesPage } from '../components/expenses/ExpensesPage';
 import { FinancialReportsPage } from '../components/reports/FinancialReportsPage';
 import { SettingsPage } from '../components/settings/SettingsPage';
 import { TenantPortalPage } from '../components/tenant-portal/TenantPortalPage';
+import { LoginPage } from '../components/auth/LoginPage';
 
 function MainLayout() {
-  const { currentUser } = useKost();
+  const { currentUser, login } = useKost();
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -25,23 +26,18 @@ function MainLayout() {
 
   // If user role is tenant and they are currently on a restricted tab, redirect them to dashboard
   useEffect(() => {
-    if (currentUser.role === 'tenant') {
+    if (currentUser?.role === 'tenant') {
       const allowedTabsForTenant = ['dashboard', 'invoices', 'tenant-room'];
       if (!allowedTabsForTenant.includes(currentTab)) {
         setCurrentTab('dashboard');
       }
     }
-  }, [currentUser.role, currentTab]);
+  }, [currentUser?.role, currentTab]);
 
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-slate-500 text-sm">
-          <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
-          <span>Memuat KostFlow...</span>
-        </div>
-      </div>
-    );
+
+  // Jika belum login, tampilkan layar login admin
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={(user, token) => login(user, token)} />;
   }
 
   const renderContent = () => {

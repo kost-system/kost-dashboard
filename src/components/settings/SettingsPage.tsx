@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useKost } from '../../context/KostContext';
 import { ConfirmModal } from '../common/ConfirmModal';
+import { AdminManagementTab } from './AdminManagementTab';
 import {
   Settings,
   Building,
@@ -53,6 +54,9 @@ export const SettingsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Admin Management Section for Owner */}
+      {currentUser?.role === 'owner' && <AdminManagementTab />}
 
       {/* User Simulation Profile Card */}
       <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-xs">

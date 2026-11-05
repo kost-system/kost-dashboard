@@ -10,11 +10,17 @@ import { ExpensesPage } from './components/expenses/ExpensesPage';
 import { FinancialReportsPage } from './components/reports/FinancialReportsPage';
 import { SettingsPage } from './components/settings/SettingsPage';
 import { TenantPortalPage } from './components/tenant-portal/TenantPortalPage';
+import { LoginPage } from './components/auth/LoginPage';
 
 const MainLayout: React.FC = () => {
-  const { currentUser } = useKost();
+  const { currentUser, login } = useKost();
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  // Jika belum login, tampilkan layar login
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={(user, token) => login(user, token)} />;
+  }
 
   // If user role is tenant and they are currently on a restricted tab, redirect them to dashboard
   useEffect(() => {
@@ -24,7 +30,7 @@ const MainLayout: React.FC = () => {
         setCurrentTab('dashboard');
       }
     }
-  }, [currentUser.role, currentTab]);
+  }, [currentUser?.role, currentTab]);
 
   const renderContent = () => {
     switch (currentTab) {
