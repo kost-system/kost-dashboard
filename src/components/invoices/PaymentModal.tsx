@@ -75,7 +75,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           onPending: function (result: any) {
             console.log('Payment pending:', result);
             refreshData();
-            onSuccess();
           },
           onError: function (result: any) {
             console.error('Payment error:', result);
@@ -83,6 +82,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           },
           onClose: function () {
             console.log('User closed the popup without finishing the payment');
+            refreshData();
           },
         });
       } else if (res.redirect_url) {
