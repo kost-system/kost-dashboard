@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
 import { useKost } from '../../context/KostContext';
-import { ConfirmModal } from '../common/ConfirmModal';
 import { AdminManagementTab } from './AdminManagementTab';
 import {
-  Settings,
   Building,
   CreditCard,
   QrCode,
   Calendar,
   Save,
   CheckCircle2,
-  RotateCcw,
-  Users,
-  ShieldCheck,
-  AlertCircle
 } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
-  const { settings, updateSettings, users, currentUser, switchUser, resetToDefaultData } = useKost();
+  const { settings, updateSettings, currentUser } = useKost();
 
   const [formState, setFormState] = useState(settings);
   const [saveNotice, setSaveNotice] = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleChange = (field: keyof typeof settings, val: any) => {
     setFormState((prev) => ({ ...prev, [field]: val }));
@@ -57,56 +50,6 @@ export const SettingsPage: React.FC = () => {
 
       {/* Admin Management Section for Owner */}
       {currentUser?.role === 'owner' && <AdminManagementTab />}
-
-      {/* User Simulation Profile Card */}
-      <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-xs">
-        <div className="flex items-center gap-2 mb-3">
-          <Users className="w-4 h-4 text-blue-600" />
-          <h3 className="text-sm font-semibold text-slate-900">
-            Peralihan Peran Pengguna (Uji Coba Hak Akses)
-          </h3>
-        </div>
-        <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-          Gunakan tombol di bawah untuk beralih antara akun Pemilik (akses penuh), Pengelola (operasional & verifikasi), atau Penghuni (portal mandiri):
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {users.map((user) => {
-            const isCurrent = user.id === currentUser.id;
-            return (
-              <button
-                key={user.id}
-                onClick={() => switchUser(user.id)}
-                className={`p-3 rounded-lg border text-left transition-colors flex flex-col justify-between ${
-                  isCurrent
-                    ? 'border-blue-600 bg-blue-50/50 shadow-xs'
-                    : 'border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-slate-900">{user.name}</span>
-                    <span className={`text-[10px] px-1.5 py-0.2 rounded font-semibold border ${
-                      user.role === 'owner' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                      user.role === 'manager' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                      'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    }`}>
-                      {user.role === 'owner' ? 'Pemilik' : user.role === 'manager' ? 'Pengelola' : 'Penghuni'}
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-slate-500 block">{user.email}</span>
-                </div>
-                {isCurrent && (
-                  <div className="mt-2 text-[11px] text-blue-700 font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Akun Aktif Sekarang</span>
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Section 1: Kost Profile */}
@@ -288,42 +231,17 @@ export const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Save button & Reset */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-          <button
-            type="button"
-            onClick={() => setShowResetConfirm(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors self-start sm:self-auto"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Reset Data ke Status Demo Awal</span>
-          </button>
-
+        {/* Save button */}
+        <div className="flex items-center justify-end pt-2">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-xs self-end sm:self-auto"
+            className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-xs"
           >
             <Save className="w-4 h-4" />
             <span>Simpan Perubahan Pengaturan</span>
           </button>
         </div>
       </form>
-
-      {/* Reset Confirmation Dialog */}
-      <ConfirmModal
-        isOpen={showResetConfirm}
-        title="Kembalikan ke Data Demo Bawaan?"
-        message="Semua transaksi baru, perubahan kamar, atau pengeluaran yang telah dicatat akan dihapus dan digantikan kembali dengan data contoh awal."
-        confirmLabel="Reset Sekarang"
-        cancelLabel="Batal"
-        isDestructive={true}
-        onConfirm={() => {
-          resetToDefaultData();
-          setShowResetConfirm(false);
-          setFormState(settings);
-        }}
-        onCancel={() => setShowResetConfirm(false)}
-      />
     </div>
   );
 };
