@@ -3,8 +3,6 @@ import { useKost } from '../../context/KostContext';
 import { AdminManagementTab } from './AdminManagementTab';
 import {
   Building,
-  CreditCard,
-  QrCode,
   Calendar,
   Save,
   CheckCircle2,
@@ -36,7 +34,7 @@ export const SettingsPage: React.FC = () => {
             Pengaturan Kost
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Konfigurasi profil properti, rekening transfer, instruksi pembayaran, dan aturan sewa
+            Konfigurasi profil properti hunian dan aturan jatuh tempo tagihan sewa
           </p>
         </div>
 
@@ -116,86 +114,11 @@ export const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Section 2: Bank Transfer Details */}
-        <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <CreditCard className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-semibold text-slate-900">Rekening Tujuan Pembayaran Bank</h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Nama Bank</label>
-              <input
-                type="text"
-                value={formState.bankName}
-                onChange={(e) => handleChange('bankName', e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Nomor Rekening</label>
-              <input
-                type="text"
-                value={formState.bankAccountNumber}
-                onChange={(e) => handleChange('bankAccountNumber', e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono font-medium"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Atas Nama Rekening</label>
-              <input
-                type="text"
-                value={formState.bankAccountName}
-                onChange={(e) => handleChange('bankAccountName', e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Section 3: QRIS Details */}
-        <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <QrCode className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-semibold text-slate-900">Informasi QRIS Pembayaran</h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">NMID QRIS</label>
-              <input
-                type="text"
-                value={formState.qrisNmid}
-                onChange={(e) => handleChange('qrisNmid', e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">Nama Merchant QRIS</label>
-              <input
-                type="text"
-                value={formState.qrisMerchantName}
-                onChange={(e) => handleChange('qrisMerchantName', e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Section 4: Rental & Due Day Policy */}
+        {/* Section 2: Rental & Due Day Policy */}
         <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-xs space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
             <Calendar className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-semibold text-slate-900">Aturan Jatuh Tempo & Instruksi</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Aturan Jatuh Tempo Tagihan</h3>
           </div>
 
           <div className="space-y-4 text-xs">
@@ -213,20 +136,8 @@ export const SettingsPage: React.FC = () => {
                 className="w-40 px-3 py-2 border border-slate-300 rounded-lg"
               />
               <span className="text-[11px] text-slate-400 mt-1 block">
-                Secara default, invoice sewa akan dibuat dengan tanggal jatuh tempo tanggal {formState.defaultDueDay} setiap bulannya.
+                Invoice sewa bulanan otomatis akan dibuat dengan tanggal jatuh tempo tanggal {formState.defaultDueDay} setiap bulannya.
               </span>
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Instruksi Pembayaran untuk Penghuni
-              </label>
-              <textarea
-                value={formState.paymentInstructions}
-                onChange={(e) => handleChange('paymentInstructions', e.target.value)}
-                rows={3}
-                className="w-full p-2.5 border border-slate-300 rounded-lg"
-              />
             </div>
           </div>
         </div>
