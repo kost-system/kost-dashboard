@@ -35,6 +35,8 @@ export interface Tenant {
   status: TenantStatus;
   notes?: string;
   emergencyContact?: string;
+  password?: string;
+  hasPassword?: boolean;
 }
 
 export type InvoiceStatus = 'unpaid' | 'pending_verification' | 'paid' | 'overdue' | 'rejected';

@@ -16,7 +16,9 @@ import {
   Trash2,
   X,
   AlertCircle,
-  FileText
+  FileText,
+  KeyRound,
+  ShieldCheck
 } from 'lucide-react';
 
 export const TenantsPage: React.FC = () => {
@@ -41,6 +43,8 @@ export const TenantsPage: React.FC = () => {
   const [newStartDate, setNewStartDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [newEmergency, setNewEmergency] = useState('');
   const [newNotes, setNewNotes] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [editPasswordInput, setEditPasswordInput] = useState('');
 
   // Available rooms for assignment
   const availableRooms = rooms.filter((r) => r.status === 'available');
@@ -62,6 +66,7 @@ export const TenantsPage: React.FC = () => {
     setNewStartDate(new Date().toISOString().split('T')[0]);
     setNewEmergency('');
     setNewNotes('');
+    setNewPassword('');
     setErrorMessage('');
     setIsAddModalOpen(true);
   };
@@ -80,6 +85,7 @@ export const TenantsPage: React.FC = () => {
       roomId: newRoomId,
       startDate: newStartDate,
       emergencyContact: newEmergency.trim() || undefined,
+      password: newPassword.trim() || undefined,
       notes: newNotes.trim() || undefined,
     });
 
@@ -94,7 +100,7 @@ export const TenantsPage: React.FC = () => {
     e.preventDefault();
     if (!editingTenant) return;
 
-    const res = updateTenant(editingTenant.id, {
+    const payload: any = {
       name: editingTenant.name.trim(),
       phone: editingTenant.phone.trim(),
       email: editingTenant.email.trim(),
@@ -102,10 +108,17 @@ export const TenantsPage: React.FC = () => {
       startDate: editingTenant.startDate,
       emergencyContact: editingTenant.emergencyContact?.trim() || undefined,
       notes: editingTenant.notes?.trim() || undefined,
-    });
+    };
+
+    if (editPasswordInput.trim().length > 0) {
+      payload.password = editPasswordInput.trim();
+    }
+
+    const res = updateTenant(editingTenant.id, payload);
 
     if (res.success) {
       setEditingTenant(null);
+      setEditPasswordInput('');
     } else {
       setErrorMessage(res.error || 'Gagal memperbarui data penghuni.');
     }
@@ -269,15 +282,27 @@ export const TenantsPage: React.FC = () => {
                         {formatDate(tenant.startDate)}
                       </td>
                       <td className="px-5 py-3.5">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
-                            isCurrentActive
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : 'bg-slate-100 text-slate-600 border-slate-200'
-                          }`}
-                        >
-                          {isCurrentActive ? 'Aktif Menghuni' : 'Sudah Keluar'}
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
+                              isCurrentActive
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                          >
+                            {isCurrentActive ? 'Aktif Menghuni' : 'Sudah Keluar'}
+                          </span>
+                          <span
+                            className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.2 rounded font-medium ${
+                              tenant.hasPassword
+                                ? 'text-blue-700 bg-blue-50'
+                                : 'text-amber-700 bg-amber-50'
+                            }`}
+                          >
+                            <KeyRound className="w-2.5 h-2.5" />
+                            {tenant.hasPassword ? 'Ada Password' : 'Belum Ada Password'}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -436,6 +461,22 @@ export const TenantsPage: React.FC = () => {
 
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">
+                  Kata Sandi Awal (Opsional)
+                </label>
+                <input
+                  type="text"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Kosongkan jika ingin penghuni mengatur sendiri saat login pertama"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono text-xs"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Jika dikosongkan, penghuni akan otomatis diminta membuat password saat pertama kali login di landing page.
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
                   Catatan Pekerjaan / Kendaraan
                 </label>
                 <textarea
@@ -565,6 +606,29 @@ export const TenantsPage: React.FC = () => {
                   onChange={(e) => setEditingTenant({ ...editingTenant, emergencyContact: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                 />
+              </div>
+
+              {/* Kelola Kata Sandi Penghuni oleh Admin */}
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-slate-800 text-xs flex items-center gap-1.5">
+                    <KeyRound className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Reset / Ganti Password Portal</span>
+                  </label>
+                  <span className="text-[11px] text-slate-500">
+                    Status saat ini: {editingTenant.hasPassword ? 'Sudah Punya' : 'Belum Ada'}
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  value={editPasswordInput}
+                  onChange={(e) => setEditPasswordInput(e.target.value)}
+                  placeholder="Ketik kata sandi baru untuk mereset (kosongkan jika tidak diubah)"
+                  className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                />
+                <p className="text-[10px] text-slate-500">
+                  Gunakan fitur ini jika penghuni lupa password mereka saat login di Landing Page.
+                </p>
               </div>
 
               <div>
