@@ -21,7 +21,9 @@ import {
   Sparkles,
   Trash2,
   X,
-  FileText
+  FileText,
+  Send,
+  Loader2
 } from 'lucide-react';
 
 export const InvoicesPage: React.FC = () => {
@@ -33,6 +35,7 @@ export const InvoicesPage: React.FC = () => {
     createInvoice,
     batchGenerateInvoices,
     deleteInvoice,
+    sendInvoiceReminder,
     currentUser,
     settings,
   } = useKost();
@@ -57,6 +60,8 @@ export const InvoicesPage: React.FC = () => {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [batchNotice, setBatchNotice] = useState('');
+  const [sendingReminderId, setSendingReminderId] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Create single invoice form
   const activeTenants = tenants.filter((t) => t.status === 'active');
@@ -199,6 +204,31 @@ export const InvoicesPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {toastMessage && (
+        <div
+          className={`p-3 rounded-lg text-xs flex items-center justify-between border animate-in fade-in duration-200 ${
+            toastMessage.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-rose-50 border-rose-200 text-rose-800'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {toastMessage.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            )}
+            <span>{toastMessage.text}</span>
+          </div>
+          <button
+            onClick={() => setToastMessage(null)}
+            className="text-slate-400 hover:text-slate-600 p-0.5"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {batchNotice && (
         <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs flex items-center gap-2 animate-in fade-in duration-200">
@@ -489,6 +519,32 @@ export const InvoicesPage: React.FC = () => {
                                   title="Verifikasi Pembayaran"
                                 >
                                   Verifikasi
+                                </button>
+                              )}
+
+                              {/* Send WhatsApp Reminder Button (Owner/Manager only, unpaid invoice) */}
+                              {currentUser.role !== 'tenant' && inv.status !== 'paid' && (
+                                <button
+                                  disabled={sendingReminderId === inv.id}
+                                  onClick={async () => {
+                                    setSendingReminderId(inv.id);
+                                    setToastMessage(null);
+                                    const res = await sendInvoiceReminder(inv.id);
+                                    setSendingReminderId(null);
+                                    setToastMessage({
+                                      type: res.success ? 'success' : 'error',
+                                      text: res.message,
+                                    });
+                                  }}
+                                  className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-md transition-colors disabled:opacity-50"
+                                  title="Kirim pengingat WhatsApp ke penghuni"
+                                >
+                                  {sendingReminderId === inv.id ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <Send className="w-3.5 h-3.5" />
+                                  )}
+                                  <span>Pengingat WA</span>
                                 </button>
                               )}
 

@@ -66,6 +66,7 @@ interface KostContextType {
   batchGenerateInvoices: (periodMonth: string, _notes?: any) => { success: boolean; count: number; message: string };
   updateInvoice: (id: string, updates: Partial<Invoice>) => { success: boolean; error?: string };
   deleteInvoice: (id: string) => { success: boolean; error?: string };
+  sendInvoiceReminder: (id: string) => Promise<{ success: boolean; message: string }>;
   // Payment Actions
   submitPaymentProof: (data: {
     invoiceId: string;
@@ -238,6 +239,19 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return { success: true };
   };
 
+  const sendInvoiceReminder = async (id: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      const res = await api.post<{ success: boolean; message: string }>(`/invoices/${id}/send-reminder`, {});
+      return {
+        success: Boolean(res?.success),
+        message: res?.message || 'Pengingat WA berhasil diproses',
+      };
+    } catch (err: any) {
+      const errMsg = err.message || 'Gagal mengirim pengingat WA';
+      return { success: false, message: errMsg };
+    }
+  };
+
   // PAYMENT WORKFLOW
   const submitPaymentProof = (data: {
     invoiceId: string;
@@ -334,6 +348,7 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         batchGenerateInvoices,
         updateInvoice,
         deleteInvoice,
+        sendInvoiceReminder,
         submitPaymentProof,
         verifyPayment,
         rejectPayment,
