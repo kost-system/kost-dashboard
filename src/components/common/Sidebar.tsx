@@ -11,7 +11,9 @@ import {
   Building,
   X,
   CreditCard,
-  UserCheck
+  UserCheck,
+  MessageSquareShare,
+  ExternalLink
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -138,6 +140,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           );
         })}
+
+        {/* Shortcut Bot WhatsApp untuk Superadmin/Owner */}
+        {currentUser?.role === 'owner' && (
+          <div className="pt-3 mt-3 border-t border-slate-800/80">
+            <div className="px-3.5 mb-1.5 text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+              Layanan Eksternal
+            </div>
+            <a
+              href={`${process.env.NEXT_PUBLIC_WA_BOT_URL || 'http://localhost:5001'}/qr`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-medium text-emerald-400 hover:bg-emerald-950/40 hover:text-emerald-300 transition-colors border border-emerald-900/40"
+              title="Buka status dan scan QR WhatsApp Bot"
+            >
+              <div className="flex items-center gap-3">
+                <MessageSquareShare className="w-4 h-4 text-emerald-400" />
+                <span>Bot WhatsApp</span>
+              </div>
+              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+            </a>
+          </div>
+        )}
       </nav>
 
       {/* Role Indicator Footer */}
