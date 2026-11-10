@@ -188,10 +188,15 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // TENANT ACTIONS
-  const addTenant = (tenantData: any) => {
-    const payload = { status: 'active', ...tenantData };
-    api.post('/tenants', payload).then(() => refreshData()).catch(console.error);
-    return { success: true };
+  const addTenant = async (tenantData: any): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const payload = { status: 'active', ...tenantData };
+      await api.post('/tenants', payload);
+      await refreshData();
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
   };
 
   const updateTenant = (id: string, updates: Partial<Tenant>) => {

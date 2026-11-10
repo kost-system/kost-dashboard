@@ -71,14 +71,14 @@ export const TenantsPage: React.FC = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleCreateTenant = (e: React.FormEvent) => {
+  const handleCreateTenant = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRoomId) {
       setErrorMessage('Pilih kamar yang tersedia untuk penghuni.');
       return;
     }
 
-    const res = addTenant({
+    const res = await addTenant({
       name: newName.trim(),
       phone: newPhone.trim(),
       email: newEmail.trim(),
