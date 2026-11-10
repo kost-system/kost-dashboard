@@ -235,7 +235,7 @@ export const TenantsPage: React.FC = () => {
                 <th className="px-5 py-3.5 font-semibold">Nama Penghuni</th>
                 <th className="px-5 py-3.5 font-semibold">Kamar Dihuni</th>
                 <th className="px-5 py-3.5 font-semibold">Kontak (HP / Email)</th>
-                <th className="px-5 py-3.5 font-semibold">Mulai Sewa</th>
+                <th className="px-5 py-3.5 font-semibold">Status Sewa Bulan Ini</th>
                 <th className="px-5 py-3.5 font-semibold">Status Tinggal</th>
                 <th className="px-5 py-3.5 font-semibold text-right">Aksi</th>
               </tr>
@@ -277,6 +277,34 @@ export const TenantsPage: React.FC = () => {
                       <td className="px-5 py-3.5">
                         <div className="text-slate-900 font-medium">{tenant.phone}</div>
                         <div className="text-[11px] text-slate-400">{tenant.email}</div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        {(() => {
+                          const currentPeriod = new Date().toISOString().slice(0, 7);
+                          const activeInv = invoices.find(
+                            (i) => i.tenantId === tenant.id && i.periodMonth === currentPeriod
+                          ) || invoices.find((i) => i.tenantId === tenant.id);
+
+                          if (!activeInv) {
+                            return <span className="text-[11px] text-slate-400 italic">Belum Ada Tagihan</span>;
+                          }
+
+                          if (activeInv.status === 'paid') {
+                            return (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                Sudah Bayar (Lunas)
+                              </span>
+                            );
+                          }
+
+                          return (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                              Belum Bayar
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td className="px-5 py-3.5 text-slate-600">
                         {formatDate(tenant.startDate)}
