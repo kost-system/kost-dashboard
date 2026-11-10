@@ -195,6 +195,10 @@ export const KostProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const updateTenant = (id: string, updates: Partial<Tenant>) => {
+    // Optimistic update agar nomor/data langsung berubah di layar tanpa delay
+    setTenants((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
+    );
     api.put(`/tenants/${id}`, updates).then(() => refreshData()).catch(console.error);
     return { success: true };
   };
